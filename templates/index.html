@@ -1,0 +1,583 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Demonstration of ChatGPT API in a Python Flask Application. A Skolo Online course."
+    />
+
+    <title>DocTalk - Conversations with Business PDFs</title>
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='images/logo.png') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://drive.google.com/uc?export=view&id=1yTLwNiCZhIdCWolQldwq4spHQkgZDqkG"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+      integrity="sha512-c42qTSw/wPZ3/5LBzD+Bw5f7bSF2oxou6wEb+I/lqeaKV5FDIfMvvRp772y4jcJLKuGUOpbJMdg/BTl50fJYAw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Noto Sans", sans-serif;
+      }
+
+      .container-fluid img {
+        width: 30%;
+      }
+
+      .main {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+
+      .part-1 {
+        flex: 0 0 15%;
+        max-width: 15%;
+        height: 100vh;
+        overflow-y: auto;
+        padding: 10px;
+        background-color: #007fff;
+        color: #ffff;
+        text-align: center;
+      }
+
+      .part-1::-webkit-scrollbar {
+        background-color: #00308f;
+        border-radius: 50px;
+        width: 15px;
+        margin: 5px;
+      }
+
+      .part-1 .chats {
+        border: 4px solid #ffff;
+        border-radius: 44px;
+        cursor: pointer;
+        font-size: 15px;
+      }
+
+      .part-1 .chats:hover {
+        background-color: #fff;
+        color: #000000;
+      }
+
+      .part-1 .history {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        text-align: center;
+        gap: 5px;
+      }
+
+      .part-1 .history-item {
+        border: 0px solid rgba(100, 100, 100, 1);
+        border-radius: 31px;
+        transition: box-shadow 594ms ease-out;
+        margin: 5px;
+        border: 4px solid #ffff;
+        cursor: pointer;
+        width: 100%;
+        color: white;
+        overflow: hidden;
+        transition: width 0.3s;
+      }
+
+      .part-1 .history-item:hover {
+        box-shadow: inset 0px 0px 200px 34px rgba(186, 186, 186, 0.3);
+      }
+
+      .part-2 {
+        flex: 0 0 calc(85% - 10px);
+        max-width: calc(85% - 10px);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        text-align: center;
+        position: relative;
+      }
+
+      .part-2 h1 {
+        font-size: 20px;
+        font-weight: 600;
+      }
+
+      .part-2 img {
+        max-width: 35%;
+        height: auto;
+      }
+
+      .text-display {
+        text-align: center;
+        width: 95%;
+      }
+
+      .input-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        background-color: #00308f;
+        border-radius: 5px;
+        padding: 5px;
+        margin: 20px;
+        position: relative;
+        color: #00308f;
+      }
+
+      .input-container button {
+        border-style: none;
+        background-color: #00308f;
+        color: #fff;
+      }
+
+      .input-container input {
+        width: 100%;
+        background-color: #00308f;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        outline: none;
+      }
+
+      .input-icon {
+        margin-right: 20px;
+        color: white;
+        font-size: 25px;
+        position: absolute;
+        right: 0;
+        cursor: pointer;
+      }
+
+      .mobile-icon {
+        display: none; /* Initially hide the mobile icon */
+      }
+
+      #text-display-container {
+        position: absolute;
+        left: 0;
+        top: 100%;
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-top: 5px;
+        text-align: start;
+        margin-top: 20px;
+      }
+
+      .animate__animated.animate__pulse {
+        animation-iteration-count: infinite;
+      }
+
+      #text-image {
+        display: none;
+        width: 10%;
+        max-width: 10%; /* Adjust the image width as needed */
+        float: left;
+      }
+
+      .text-entry {
+        width: 90%;
+        float: right;
+        word-wrap: break-word; /* Allow text to wrap within the div */
+        max-width: 100%; /* Ensure the text container doesn't exceed the viewport width */
+      }
+
+      @media screen and (max-width: 768px) {
+        .main {
+          flex-direction: column;
+        }
+
+        .part-1 {
+          display: none;
+        }
+
+        .part-2 {
+          flex: 0 0 100%;
+          max-width: 100%;
+          padding: 15px;
+        }
+
+        .input-container input {
+          width: 80%;
+        }
+
+        .mobile-icon {
+          display: inline-block;
+          margin-right: 10px;
+        }
+
+        .text-entry {
+          width: 100%; /* Full width on small screens */
+          max-width: 100%;
+        }
+
+        #text-image {
+          width: 20%; /* Adjust the image width for small screens if needed */
+          max-width: 20%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="main">
+      <div class="part-1">
+        <div class="chats"><i class="fa-solid fa-plus"></i> New Chats</div>
+        <hr />
+        <div class="history ">
+       
+        </div>
+      </div>
+       
+     <div class="part-2">
+      <div id="logo">
+        <img src="../static/images/logo.png" alt="" >
+        DocTalk
+      </img>
+        <h1>Conversations with Business PDFs</h1>
+      </div>
+
+      <div id="list-group" class="list-group w-auto">
+
+
+      </div>
+
+      <div class="text-display">
+        <div class="input-container">
+          <div class="input-icon">
+            <button id="gpt-button" class="btn">
+              <i class="fa-solid fa-right-to-bracket fa-beat-fade"></i>
+            </button>
+          </div>
+          <input
+    type="text"
+    placeholder="Enter your prompt here....."
+    id="chat-input"
+    class="input-group-append form-control"
+/>
+<input
+    type="file"
+    id="pdf-file-input"
+    class="input-group-append form-control"
+    accept=".pdf"
+/>
+<button id="gpt-button" class="btn">
+    <i class="fa-solid fa-right-to-bracket fa-beat-fade"></i>
+</button>
+
+        <!-- <input
+        type="text"
+        placeholder="Enter your prompt here....."
+        id="chat-input"
+        class="input-group-append form-control"
+      /> -->
+          <!-- <input type="text" class="" id="" /> -->
+          <div class="input-group-append">
+  
+         
+          
+          <div class="text-container" id="text-display-container">
+            <img
+              src="../static/images/hi-img.png"
+              alt=""
+              class="animate__animated animate__pulse"
+              id="text-image"
+            />
+          </div>
+          </div>
+        </div>
+      </div> 
+    
+
+    
+     </div>
+  
+  </div>
+
+   
+    <script
+      src="https://code.jquery.com/jquery-3.6.3.min.js"
+      integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      // $("#gpt-button").click(function () {
+      //   var question = $("#chat-input").val();
+      $("#gpt-button").click(function () {
+    var question = $("#chat-input").val();
+    var pdfFile = $("#pdf-file-input")[0].files[0]
+    if (pdfFile) {
+        // Perform file upload or further processing as needed
+        // ...
+
+        // Clear the file input
+        $("#pdf-file-input").val("");
+    }
+
+        let html_data = "";
+        html_data += `<a href="#" class="list-group-item list-group-item-action d-flex gap-3 py-3">
+<img src="https://w7.pngwing.com/pngs/178/595/png-transparent-user-profile-computer-icons-login-user-avatars-thumbnail.png" alt="twbs" width="32" height="32"
+  class="rounded-circle flex-shrink-0">
+<div class="d-flex gap-2 w-100 justify-content-between">
+  <div>
+    <p class="mb-0 opacity-75">${question}</p>
+
+  </div>
+
+  </div>
+
+</a> 
+
+<div id="response"></div>
+
+`;
+        $("#chat-input").val("");
+
+        $("#list-group").append(html_data);
+        $("div#response:last").html(`
+	<!-- code here -->
+		<div class="py-3" id="ok-good">
+			<h2 class="skeleton1">
+			</h2>
+      <h2 class="skeleton2">
+			</h2>
+      <h2 class="skeleton3">
+			</h2>
+		</div>`);
+        if ($("#ok-good").length) {
+          // Check if the div exists
+          $("html, body").animate(
+            {
+              scrollTop: $("#ok-good").offset().top, // Scroll to the top position of the div
+            },
+            100
+          ); // Set the duration of the animation (in milliseconds)
+        }
+        // AJAX CALL to SERVER.
+        $.ajax({
+          type: "POST",
+          url: "/",
+          data: {
+            prompt: question,
+          },
+          success: function (data) {
+            let gpt_data = "";
+            gpt_data += `<a style="background-color:#f8f9fa;" href="#" class="list-group-item list-group-item-action d-flex gap-3 py-3">
+<img src="{{ url_for('static', filename='images/openai.png') }}" alt="twbs" width="32" height="32"
+  class="rounded-circle flex-shrink-0">
+<div class="d-flex gap-2 w-100 justify-content-between">
+  <div>
+    <p id="typing-demo" class="mb-0 opacity-75"></p>
+  </div>
+</div>
+</a> <br>`;
+
+            $("#list-group").append(gpt_data);
+            $("div#response:last").html("");
+
+            var i = 0;
+            var speed = 30;
+            // var speed = 0;
+
+            function typeWriter() {
+              if (i < data.length) {
+                $("p#typing-demo:last").text(
+                  $("p#typing-demo:last").text() + data.charAt(i)
+                );
+                i++;
+                setTimeout(typeWriter, speed);
+              }
+            }
+
+            typeWriter();
+          },
+        });
+      });
+
+      const inputField = document.getElementById("input-field");
+const showTextButton = document.getElementById("show-text-button");
+const logo = document.getElementById("logo");
+const textContainer = document.getElementById("text-display-container");
+const textImage = document.getElementById("text-image");
+const history = document.querySelector(".history");
+const newChatsButton = document.querySelector(".chats");
+
+// showTextButton.addEventListener("click", displayEnteredText);
+// inputField.addEventListener("keyup", function (event) {
+//   if (event.key === "Enter") {
+//     displayEnteredText();
+//   }
+// });
+      document.addEventListener("DOMContentLoaded", function () {
+        const showTextButton = document.getElementById("showTextButton");
+        const inputField = document.getElementById("inputField");
+
+        showTextButton.addEventListener("click", displayEnteredText);
+        inputField.addEventListener("keyup", function (event) {
+          if (event.key === "Enter") {
+            displayEnteredText();
+          }
+        });
+
+        function displayEnteredText() {
+          // Your function code here
+          console.log("Text displayed");
+        }
+      });
+
+newChatsButton.addEventListener("click", function () {
+  // Redirect to home.html with the "newChat" query parameter
+  window.location.href = "../templates/index.html";
+});
+
+// Load chat history from localStorage when the page loads
+window.onload = function () {
+  loadChatHistory();
+};
+
+function displayEnteredText() {
+  const enteredText = inputField.value.trim();
+
+  if (enteredText) {
+    // Create a new div for the entered text
+    const textDisplayContainer = document.createElement("div");
+    textDisplayContainer.className =
+      "text-entry animate__animated animate__fadeInBottomLeft";
+    textDisplayContainer.textContent = enteredText;
+
+    // Shorten the input text (You can implement your own logic here)
+    const shortenedInput = shortenText(enteredText);
+
+    // Create a new history item
+    const historyItem = document.createElement("div");
+    historyItem.className = "history-item";
+    historyItem.innerHTML = `${shortenedInput} <i class="fa-solid fa-trash" onclick="deleteChat(this)"></i>`;
+
+    // Add the history item to the chat history
+    history.appendChild(historyItem);
+
+    // Save the chat history to localStorage with a unique key
+    saveChatHistory(enteredText);
+
+    // Clear the input field
+    inputField.value = "";
+
+    // Hide the logo image
+    logo.style.display = "none";
+
+    // Show the text container when there is input
+    textContainer.style.display = "block";
+    textImage.style.display = "block";
+
+    // Append the new div below the existing ones
+    textContainer.appendChild(textDisplayContainer);
+  }
+}
+
+// Function to shorten text (Implement your own logic)
+function shortenText(text) {
+  return text.slice(0, 10); // Shorten to the first 10 characters
+}
+
+// Save chat history to localStorage with a unique key
+function saveChatHistory(chatText) {
+  const pageKey = window.location.pathname;
+  let chatHistory = localStorage.getItem(pageKey) || "[]";
+  chatHistory = JSON.parse(chatHistory);
+
+  // If the user clicked on "New Chat," clear the chat history
+  if (window.location.search.includes("newChat=true")) {
+    chatHistory = [];
+  }
+
+  chatHistory.push(chatText);
+  localStorage.setItem(pageKey, JSON.stringify(chatHistory));
+}
+
+// Load chat history from localStorage with a unique key
+function loadChatHistory() {
+  const pageKey = window.location.pathname;
+  let chatHistory = localStorage.getItem(pageKey) || "[]";
+  chatHistory = JSON.parse(chatHistory);
+
+  chatHistory.forEach((chatText) => {
+    const shortenedInput = shortenText(chatText);
+    const historyItem = document.createElement("div");
+    historyItem.className = "history-item";
+    historyItem.innerHTML = `${shortenedInput} <i class="fa-solid fa-trash" onclick="deleteChat(this)"></i>`;
+    history.appendChild(historyItem);
+  });
+}
+
+// Delete chat history
+function deleteChat(deleteButton) {
+  const historyItem = deleteButton.parentElement;
+  const chatText = historyItem.textContent.split(" ")[0];
+  historyItem.remove();
+  localStorage.clear();
+  // Remove chat history from localStorage with a unique key
+  const pageKey = window.location.pathname;
+  let chatHistory = localStorage.getItem(pageKey) || "[]";
+  chatHistory = JSON.parse(chatHistory);
+  const index = chatHistory.indexOf(chatText);
+  if (index !== -1) {
+    chatHistory.splice(index, 1);
+    localStorage.setItem(pageKey, JSON.stringify(chatHistory));
+    
+  }
+}
+
+    </script>
+  </body>
+</html> -->
